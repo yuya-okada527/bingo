@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- Material Design for Bootstrap fonts and icons -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+<!-- Material Design for Bootstrap CSS -->
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+<!-- custom style sheet -->
+<link href="/css/style.css" th:href="@{/css/style.css}" rel="stylesheet"></link>
+<title>Guest Game</title>
+</head>
+<body>
+  <div class="container">
+    r
+    <div class="card text-white text-center bg-warning mt-3 mb-3 col-10 mx-auto" th:if="${bingo}">
+      <span class="card-body h1 mt-2">
+        Bingo!
+      </span>
+    </div>
+    <table class="mx-auto text-center">
+      <tr th:each="i : ${#numbers.sequence(0, 4)}">
+        <td th:each="j : ${#numbers.sequence(0, 4)}">
+          <div th:if="${card.squaresBoolean[i][j]}">
+            <span class="card card-body h6 text-danger">B!</span>
+          </div>
+          <div th:unless="${card.squaresBoolean[i][j]}">
+            <span class="card card-body h6"
+                  th:text="${card.squaresNum[i][j]}"></span>
+          </div>
+        </td>
+      </tr>
+    </table>
+    <div class="form-group row justify-content-center">
+      <div>
+        <a th:href="@{|/guest/game/${gameName}/${guestName}/refresh|}" th:unless="${bingo}">
+          <button type="button" class="btn btn-primary btn-lg btn-raised m-1 mt-3">
+            Refresh
+          </button>
+        </a>
+        <button type="button"
+                class="btn btn-primary btn-lg btn-raised m-1 mt-3"
+                id="historyButton"
+                data-toggle="modal"
+                data-target="#historyWindow"
+                th:data-game="${gameName}">
+          History
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 履歴ウィンドウ -->
+  <div class="modal fade" id="historyWindow" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="historyLabel">ビンゴ履歴</h4>
+        </div>
+        <div class="modal-body" id="bingoHistory">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
+  <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+  <script>
+  let host = location.hostname;
+  if (host === "localhost") {
+	  host += ":5000"
+  }
+  let url = location.protocol + "//" + host + "/guest/game/history?gameName=";
+  url += document.getElementById("historyButton").dataset.game;
+  document.getElementById("historyButton").addEventListener("click", function() {
+    fetch(url)
+	  .then(response => {
+	    return response.text();
+	  })
+	  .then(body => {
+		// 要素の取得
+	    let bingoHistory = document.getElementById("bingoHistory");
+
+	    // ボディを削除
+	    while (bingoHistory.firstChild) {
+	      bingoHistory.removeChild(bingoHistory.firstChild);
+	    }
+
+	    // リストを作成
+	    let div = document.createElement("div");
+	    //ul.classList.add("list-group");
+	    //ul.classList.add("list-group-holizontal");
+	    console.log(JSON.parse(body));
+	    Array.prototype.forEach.call(JSON.parse(body)["gameHistory"], function(element) {
+	      console.log(element);
+	      //let li = document.createElement("li");
+	      //li.classList.add("list-group-item");
+	      //li.classList.add("col-1");
+	      let span = document.createElement("span");
+	      span.classList.add("badge");
+	      span.classList.add("badge-primary");
+	      span.classList.add("badge-pill");
+	      span.classList.add("m-1");
+	      span.textContent = element;
+	      //li.appendChild(span);
+	      //ul.appendChild(li);
+	      div.appendChild(span);
+	    })
+
+	    // 要素の更新
+	    //bingoHistory.appendChild(ul);
+	    bingoHistory.appendChild(div);
+	  })
+  }, false)
+  </script>
+</body>
+</html>

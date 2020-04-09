@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- Material Design for Bootstrap fonts and icons -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+<!-- Material Design for Bootstrap CSS -->
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+<!-- custom style sheet -->
+<link href="/css/style.css" th:href="@{/css/style.css}" rel="stylesheet"></link>
+<title>Guest Login</title>
+</head>
+<body>
+  <div class="container">
+    <nav class="navbar navbar-dark bg-primary mt-5 mb-2">
+      <a href="#" class="navbar-brand">Guest Login</a>
+    </nav>
+    <form method="post" th:action="@{/guest/login}" th:object="${guestLoginForm}">
+      <div class="form-group col-10 mx-auto">
+        <label for="guestName" class="bmd-label-floating">Name</label>
+        <input type="text" class="form-control" id="guestName" name="guestName" th:field="*{guestName}" />
+        <div class="alert alert-danger m-1" role="alert" th:if="${sameUserNameExists}" th:text="${userErrorMessage}"></div>
+        <div th:if="${#fields.hasErrors('guestName')}" th:errors="*{guestName}" class="alert alert-danger m-1"></div>
+      </div>
+      <div class="form-group col-10 mx-auto">
+        <label for="exampleSelect1" class="bmd-label-floating">Game</label>
+        <select class="form-control" id="exampleSelect1" th:field="*{gameName}">
+          <option th:each="game : ${games}" th:text="${game}" th:value="${game}"></option>
+        </select>
+        <div class="alert alert-danger" role="alert" th:if="${gameNameNotExists}" th:text="${gameErrorMessage}"></div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block col-6 btn-raised mx-auto d-block">Join</button>
+    </form>
+  </div>
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
+  <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+</body>
+</html>
